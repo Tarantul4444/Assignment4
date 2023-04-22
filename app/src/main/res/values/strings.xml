@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Assignment4</string>
+    <string name="list_movie">Movies</string>
+    <string name="saved_movie">Saved</string>
+    <string name="save_anime">Save</string>
+    <string name="unsave_anime">Unsave</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
