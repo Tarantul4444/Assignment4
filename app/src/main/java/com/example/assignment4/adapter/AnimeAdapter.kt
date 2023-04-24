@@ -10,24 +10,17 @@ import com.example.assignment4.databinding.AnimeItemBinding
 import com.example.assignment4.retrofit.Anime
 
 class AnimeAdapter(val listener: Listener): RecyclerView.Adapter<AnimeAdapter.AnimeHolder>() {
-    var animeList = ArrayList<Anime>()
+    var animeList = ArrayList<String>()
 
     class AnimeHolder(item: View): RecyclerView.ViewHolder(item) {
         val binding = AnimeItemBinding.bind(item)
-        fun bind(anime: Anime, listener: Listener) {
-            binding.animeTitle.text = anime.anime
+        fun bind(anime: String, listener: Listener) {
+            binding.animeTitle.text = anime
             itemView.setOnClickListener {
                 listener.onClick(anime)
             }
             binding.animeSave.setOnClickListener {
                 listener.onSave(anime)
-                binding.animeSave.visibility = View.GONE
-                binding.animeUnsave.visibility = View.VISIBLE
-            }
-            binding.animeUnsave.setOnClickListener {
-                listener.onUnsave(anime)
-                binding.animeSave.visibility = View.VISIBLE
-                binding.animeUnsave.visibility = View.GONE
             }
         }
     }
@@ -45,14 +38,13 @@ class AnimeAdapter(val listener: Listener): RecyclerView.Adapter<AnimeAdapter.An
         holder.bind(animeList[position], listener)
     }
 
-    fun addAnime(anime: Anime) {
+    fun addAnime(anime: String) {
         animeList.add(anime)
         notifyDataSetChanged()
     }
 
     interface Listener {
-        fun onClick(anime: Anime)
-        fun onSave(anime: Anime)
-        fun onUnsave(anime: Anime)
+        fun onClick(anime: String)
+        fun onSave(anime: String)
     }
 }

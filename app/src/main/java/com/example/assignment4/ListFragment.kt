@@ -28,7 +28,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 class ListFragment : Fragment(), AnimeAdapter.Listener {
     lateinit var binding: FragmentListBinding
     private var adapter = AnimeAdapter(this)
-    val animes = arrayListOf<Anime>()
     private var animeManager: AnimeManager? = null
 
     override fun onCreateView(
@@ -48,59 +47,30 @@ class ListFragment : Fragment(), AnimeAdapter.Listener {
             .addConverterFactory(GsonConverterFactory.create()).build()
         val animeAPI = retrofit.create(AnimeAPI::class.java)
         CoroutineScope(Dispatchers.IO).launch {
-//            val listTitles = animeAPI.getAllAnime().drop(4).subList(0, 3)
-//            for(title in listTitles) {
-//                val anime = animeAPI.getAnime(title).body()?.get(0)
-//                if (anime != null) {
-//                    adapter.addAnime(anime)
-//                    animes.add(anime)
-//                }
-//                Log.i("msg", title)
-//            }
-            animes.add(Anime("1", "2", "3"))
-            animes.add(Anime("3", "4", "5"))
-            animes.add(Anime("5", "6", "7"))
+            val listTitles = animeAPI.getAllAnime().drop(4)
+            activity?.runOnUiThread {
+                adapter.animeList = arrayListOf()
+                for(title in listTitles) adapter.addAnime(title)
+            }
         }
         Log.i("msg", animeManager.toString())
-        animeManager!!.openDatabase()
-        for(anime in animes) {
-//            var checked = false
-//            if(animeManager?.readDatabase()?.indexOf(anime) != -1) checked = true
-            adapter.addAnime(anime)
-        }
-        animeManager!!.closeDatabase()
         return binding.root
     }
 
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        adapter.animeList = arrayListOf()
-        animeManager!!.openDatabase()
-        for(anime in animes) {
-//            var checked = false
-//            if(animeManager?.readDatabase()?.indexOf(anime) != -1) checked = true
-            adapter.addAnime(anime)
-        }
-        animeManager!!.closeDatabase()
-    }
-
-    override fun onClick(anime: Anime) {
+    override fun onClick(anime: String) {
         val intent = Intent(activity, AnimeActivity::class.java)
-        intent.putExtra("anime", arrayOf(anime.anime, anime.character, anime.quote))
+        intent.putExtra("anime", anime)
         startActivity(intent)
     }
 
-    override fun onSave(anime: Anime) {
+    override fun onSave(anime: String) {
         if(animeManager == null) return
         animeManager!!.openDatabase()
+        if(animeManager!!.findDatabase(anime)) {
+            animeManager!!.closeDatabase()
+            return
+        }
         animeManager!!.insertDatabase(anime)
-        animeManager!!.closeDatabase()
-    }
-
-    override fun onUnsave(anime: Anime) {
-        if(animeManager == null) return
-        animeManager!!.openDatabase()
-        animeManager!!.deleteDatabase(anime)
         animeManager!!.closeDatabase()
     }
 

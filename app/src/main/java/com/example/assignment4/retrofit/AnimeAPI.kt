@@ -10,5 +10,6 @@ interface AnimeAPI {
     suspend fun getAllAnime(): List<String>
 
     @GET("quotes/anime")
-    suspend fun getAnime(@Query("title") anime: String): Response<List<Anime>>
+    suspend fun getAnime(
+        @Query("title") anime: String): Response<List<Anime>>
 }

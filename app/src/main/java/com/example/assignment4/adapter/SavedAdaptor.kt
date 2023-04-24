@@ -4,20 +4,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.assignment4.ListFragment
 import com.example.assignment4.R
 import com.example.assignment4.databinding.AnimeItemBinding
 import com.example.assignment4.retrofit.Anime
 
-class SavedAdaptor : RecyclerView.Adapter<SavedAdaptor.AnimeHolder>() {
-    var animeList = ArrayList<Anime>()
+class SavedAdaptor(val listener: AnimeAdapter.Listener) : RecyclerView.Adapter<SavedAdaptor.AnimeHolder>() {
+    var animeList = ArrayList<String>()
 
     class AnimeHolder(item: View): RecyclerView.ViewHolder(item) {
         val binding = AnimeItemBinding.bind(item)
-        fun bind(anime: Anime) {
-            binding.animeTitle.text = anime.anime
-            binding.animeSave.visibility = View.GONE
-            binding.animeUnsave.visibility = View.GONE
+        fun bind(anime: String, listener: AnimeAdapter.Listener) {
+            binding.animeTitle.text = anime
+            binding.animeSave.text = "Delete"
+            itemView.setOnClickListener {
+                listener.onClick(anime)
+            }
+            binding.animeSave.setOnClickListener {
+                listener.onSave(anime)
+            }
         }
     }
 
@@ -31,11 +35,16 @@ class SavedAdaptor : RecyclerView.Adapter<SavedAdaptor.AnimeHolder>() {
     }
 
     override fun onBindViewHolder(holder: AnimeHolder, position: Int) {
-        holder.bind(animeList[position])
+        holder.bind(animeList[position], listener)
     }
 
-    fun addAnime(anime: Anime) {
+    fun addAnime(anime: String) {
         animeList.add(anime)
+        notifyDataSetChanged()
+    }
+
+    fun removeAnime(anime: String) {
+        animeList.remove(anime)
         notifyDataSetChanged()
     }
 }
